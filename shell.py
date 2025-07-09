@@ -50,9 +50,11 @@ class Shell:
             dir = self.get_dir(input[0])
         if dir is None:
             return
-        for entry in dir.entries.keys():
-            print(entry)
-
+        for name, f in dir.entries.items():
+            if isinstance(f, Directory):
+                print(f"\033[34m{name}\033[0m")
+            else:
+                print(f"\033[32m{name}\033[0m")
     def change_directory(self, input):
         if not input:
             self.current_dir = root
