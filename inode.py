@@ -1,9 +1,11 @@
 datablocks = []
 last_index = -1
+
 class Data:
     def __init__(self, content) -> None:
         self.datablob = content.encode('utf-8')
         pass
+
 class INode:
     def __init__(self, name, size, data):
         datablocks.append(data)
@@ -12,4 +14,3 @@ class INode:
         global last_index
         last_index += 1
         self.index = last_index
-        pass

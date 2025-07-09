@@ -1,3 +1,4 @@
-import shell
+from shell import Shell
 if __name__ == "__main__":
-    shell.shell()
+    shell = Shell()
+    shell.start()
