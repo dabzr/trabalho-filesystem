@@ -50,11 +50,15 @@ class Shell:
             dir = self.get_dir(input[0])
         if dir is None:
             return
-        for entry in dir.entries:
-            print(entry.name)
+        for entry in dir.entries.keys():
+            print(entry)
 
     def change_directory(self, input):
-        pass
+        if not input:
+            self.current_dir = root
+            return
+        self.current_dir = self.get_dir(input[0]) or self.current_dir
+
     def remove_directory(self, input):
         pass
     def remove_archive(self, input):
@@ -62,7 +66,16 @@ class Shell:
     def make_file(self, input):
         pass
     def make_directory(self, input):
-        pass
+        if "/" not in input[0]:
+            self.current_dir.entries[input[0]] = Directory(input[0], parent=self.current_dir)
+            return
+        p = input.rpartition("/")
+        dir = self.get_dir(p[0])
+        if dir is None:
+            return
+        p2 = p.rpartition("/")
+        dir.entries[p[-1]] = Directory(p[-1], parent=p2[-1])
+
     def cat(self, input):
         pass
     def exit_(self, input):
