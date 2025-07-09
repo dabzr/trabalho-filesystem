@@ -1,4 +1,3 @@
-from inode import INode
 
 def list_directories(input):
     pass
@@ -29,14 +28,13 @@ commands = {
 }
 
 def shell():
-    current_dir = INode("/", 0, None)
     while(True):
         user_input = input("> ").split()
         func = commands.get(user_input[0])
         if func is None:
             print(f"Command not found: {user_input[0]}")
             continue
-        func([current_dir] + user_input[1:])
+        func(user_input[1:])
 
 def parse_path():
     pass
