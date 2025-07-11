@@ -12,6 +12,7 @@ class Directory:
         self.inode_idx = fs.alloc_inode()
         inode = fs.inodes[self.inode_idx]
         inode.used = True
+        inode.file_type = "folder"
         inode.write_bytes(fs, b"")
 
     def get_entries(self):
