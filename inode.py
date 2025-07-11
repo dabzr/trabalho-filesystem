@@ -13,7 +13,7 @@ class INode:
         self.used = False
         self.name = ""
         self.size = 0
-        self.file_type = None
+        self.file_type = ""
         self.blocks = []
         self.next_inode  = None
 
