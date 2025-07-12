@@ -34,7 +34,7 @@ class ChainDirectory:
             self.first_block, self.size = self.fs.write_chain(data)
         else:
             self.first_block, self.size = self.fs.rewrite_chain(
-                self.first_block, self.size, data
+                self.first_block, data
             )
         if self.parent:
             parent_entries = self.parent.get_entries()
@@ -106,7 +106,7 @@ class ChainFileSystem:
             idx = self.next_block[idx]
         return bytes(buf[:size])
 
-    def rewrite_chain(self, first_block, old_size, data: bytes):
+    def rewrite_chain(self, first_block, data: bytes):
         self.free_chain(first_block)
         return self.write_chain(data)
 
