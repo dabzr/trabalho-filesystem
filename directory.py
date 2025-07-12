@@ -1,5 +1,78 @@
 # Diretório salva as entradas no próprio inode e depois lé, coisa engraçada
 class Directory:
+    def __init__(self):
+        self.parent = None
+        self.name = None
+        self.fs = None
+
+    def get_entries(self):
+        raise NotImplementedError
+    def update_entries(self, entries: dict):
+        raise NotImplementedError
+    def write_entries(self, entries: dict):
+        raise NotImplementedError
+    def get_path(self):
+        raise NotImplementedError
+
+class ChainDirectory(Directory):
+    def __init__(self, fs, name, parent=None, first_block=None, size=0):
+        self.fs = fs
+        self.name = name
+        self.parent = parent
+        self.first_block = first_block
+        self.size = size
+        if self.first_block is None:
+            self.write_entries({})
+
+    def _read_entries_raw(self):
+        if self.size == 0:
+            return b""
+        return self.fs.read_chain(self.first_block, self.size)
+
+    def get_entries(self):
+        raw = self._read_entries_raw()
+        text = raw.decode("utf-8")
+        entries = {}
+        for line in text.splitlines():
+            if not line.strip():
+                continue
+            name, ftype, first, size = line.split(":")
+            entries[name] = (ftype, int(first), int(size))
+        return entries
+
+    def write_entries(self, entries):
+        lines = [
+            f"{name}:{ftype}:{first}:{size}"
+            for name, (ftype, first, size) in entries.items()
+        ]
+        data = "\n".join(lines).encode("utf-8")
+        if self.first_block is None:
+            self.first_block, self.size = self.fs.write_chain(data)
+        else:
+            self.first_block, self.size = self.fs.rewrite_chain(
+                self.first_block, data
+            )
+        if self.parent:
+            parent_entries = self.parent.get_entries()
+            parent_entries[self.name] = ("directory", self.first_block, self.size)
+            self.parent.write_entries(parent_entries)
+
+    def update_entries(self, entries):
+        self.write_entries(entries)
+
+    def get_path(self):
+        if self.parent is None:
+            return "/"
+        parts = []
+        node = self
+        while node.parent is not None:
+            parts.append(node.name)
+            node = node.parent
+        return "/" + "/".join(reversed(parts))
+
+
+
+class INodeDirectory(Directory):
     def __init__(self, fs, name, parent=None, inode_idx=None) -> None:
         self.name = name
         self.parent = parent
@@ -42,3 +115,4 @@ class Directory:
             parts.append(node.name)
             node = node.parent
         return "/" + "/".join(reversed(parts))
+    
