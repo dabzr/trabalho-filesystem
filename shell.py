@@ -1,8 +1,7 @@
 import os
-from filesystem import FileSystem
 
 class Shell:
-    def __init__(self, fs: FileSystem) -> None:
+    def __init__(self, fs) -> None:
         self.fs = fs
         self.commands = {
             "ls": self.fs.list_directory,

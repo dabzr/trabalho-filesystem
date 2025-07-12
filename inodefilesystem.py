@@ -1,8 +1,8 @@
 from directory import Directory
-from inode import INode  # File
+from inode import INode
 
 
-class FileSystem:
+class INodeFileSystem:
     def __init__(self, num_blocks, block_size):
         self.NUM_BLOCKS = num_blocks
         self.BLOCK_SIZE = block_size
@@ -53,14 +53,14 @@ class FileSystem:
             entries = dir.get_entries()
 
             if part not in entries:
-                #print(f"Directory '{part}' not found.")
+                # print(f"Directory '{part}' not found.")
                 return None
 
             inode_idx = entries[part]
             inode = self.inodes[inode_idx]
 
             if inode.file_type != "directory":
-                #print(f"Path error: '{part}' is not a directory")
+                # print(f"Path error: '{part}' is not a directory")
                 return None
 
             dir = Directory(name=part, parent=dir, inode_idx=inode_idx, fs=self)
@@ -212,7 +212,6 @@ class FileSystem:
 
         dst_entries[dst_name] = inode_idx
         dst_dir.update_entries(dst_entries)
-
 
     def cat(self, path):
         p = path[0].rpartition("/")
