@@ -1,8 +1,7 @@
 import os
-from filesystem import FileSystem
 
 class Shell:
-    def __init__(self, fs: FileSystem) -> None:
+    def __init__(self, fs) -> None:
         self.fs = fs
         self.commands = {
             "ls": self.fs.list_directory,
@@ -14,6 +13,7 @@ class Shell:
             "exit": self.exit_,
             "cat": self.fs.cat,
             "clear": self.clear,
+            "mv": self.fs.move,
         }
 
     def start(self):

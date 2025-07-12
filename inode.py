@@ -15,7 +15,7 @@ class INode:
         self.size = 0
         self.file_type = ""
         self.blocks = []
-        self.next_inode  = None
+        self.next_inode = None
 
     def get_data(self, fs):
         data = bytearray()
@@ -60,5 +60,6 @@ class INode:
                 nxt = fs.alloc_inode()
                 inode.next_inode = nxt
                 inode = fs.inodes[nxt]
+
         self.size = len(data)
         self.used = True
