@@ -6,7 +6,7 @@ class INodeFileSystem:
     def __init__(self, num_blocks, block_size):
         self.NUM_BLOCKS = num_blocks
         self.BLOCK_SIZE = block_size
-        self.NUM_INODES = (num_blocks // INode.MAX_BLOCKS) + 10
+        self.NUM_INODES = (num_blocks // INode.MAX_BLOCKS) + 16
 
         self.blocks = [bytearray(block_size) for _ in range(num_blocks)]
         self.free_blocks = set(range(num_blocks))
