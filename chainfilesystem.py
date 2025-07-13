@@ -230,11 +230,16 @@ class ChainFileSystem:
         if d_name in entries_dst:
             print(f"mv: destination '{d_name}' already exists")
             return
-        src_parent.update_entries(entries_src)
         entries_dst[d_name] = meta
         dst_parent.update_entries(entries_dst)
+        src_parent.update_entries(entries_src)
 
     def cat(self, args):
+        data = self._cat(args)
+        if data:
+            print(data.decode("utf-8"))
+
+    def _cat(self, args):
         if not args:
             print("cat: missing operand")
             return
@@ -246,7 +251,7 @@ class ChainFileSystem:
             return
         meta = entries[name]
         data = self.read_chain(meta[1], meta[2])
-        print(data.decode("utf-8"))
+        return data
 
     def list_directory(self, args=None):
         target = self.current_dir if not args else self.get_dir(args[0])

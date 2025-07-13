@@ -216,6 +216,11 @@ class INodeFileSystem:
         dst_dir.update_entries(dst_entries)
 
     def cat(self, path):
+        data = self._cat(path)
+        if data:
+            print(data.decode("utf-8"))
+
+    def _cat(self, path):
         p = path[0].rpartition("/")
         dir = self.get_dir(p[0])
         if dir is None:
@@ -226,7 +231,7 @@ class INodeFileSystem:
             return
         inode_idx = entries[p[-1]]
         data = self.inodes[inode_idx].get_data(self)
-        print(data.decode("utf-8"))
+        return data
 
     def list_directory(self, path=None):
         dir = self.current_dir if not path else self.get_dir(path[0])
