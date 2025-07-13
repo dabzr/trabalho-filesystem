@@ -77,9 +77,11 @@ class INodeDirectory(Directory):
         self.name = name
         self.parent = parent
         self.fs = fs
+        self.entries = {}
 
         if inode_idx is not None:
             self.inode_idx = inode_idx
+            self._get_entries()
             return
 
         self.inode_idx = fs.alloc_inode()
@@ -88,19 +90,21 @@ class INodeDirectory(Directory):
         inode.file_type = "directory"
         inode.write_bytes(fs, b"")
 
-    def get_entries(self):
+    def _get_entries(self):
         inode = self.fs.inodes[self.inode_idx]
         raw = inode.get_data(self.fs)
         lines = raw.decode('utf-8').splitlines()
-        entries = {}
         for line in lines:
             if not line.strip():
                 continue
             name, idx = line.split(":")
-            entries[name] = int(idx)
-        return entries
+            self.entries[name] = int(idx)
+
+    def get_entries(self):
+        return self.entries
 
     def update_entries(self, entries: dict):
+        self.entries = entries
         lines = [f"{name}:{idx}" for name, idx in entries.items()]
         raw = "\n".join(lines).encode('utf-8')
         inode = self.fs.inodes[self.inode_idx]

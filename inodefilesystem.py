@@ -6,7 +6,7 @@ class INodeFileSystem:
     def __init__(self, num_blocks, block_size):
         self.NUM_BLOCKS = num_blocks
         self.BLOCK_SIZE = block_size
-        self.NUM_INODES = num_blocks // INode.MAX_BLOCKS
+        self.NUM_INODES = (num_blocks // INode.MAX_BLOCKS) + 16
 
         self.blocks = [bytearray(block_size) for _ in range(num_blocks)]
         self.free_blocks = set(range(num_blocks))
@@ -106,9 +106,10 @@ class INodeFileSystem:
         entries = dir.parent.get_entries()
         if dir.name in entries:
             inode_idx = entries.pop(dir.name)
+            inode = self.inodes[inode_idx]
+            inode.free_chain(self)
             self.free_inodes.add(inode_idx)
-            self.inodes[inode_idx].reset()
-            self.inodes[inode_idx].free_chain()
+            inode.reset()
             dir.parent.update_entries(entries)
 
     def make_file(self, path):
@@ -160,9 +161,10 @@ class INodeFileSystem:
         entries = dir.get_entries()
         if fname in entries:
             inode_idx = entries.pop(fname)
+            inode = self.inodes[inode_idx]
+            inode.free_chain(self)
             self.free_inodes.add(inode_idx)
-            self.inodes[inode_idx].reset()
-            self.inodes[inode_idx].free_chain()
+            inode.reset()
             dir.update_entries(entries)
 
     def move(self, args):
