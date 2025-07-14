@@ -34,7 +34,7 @@ def one_pass(fs_class, dir_names, file_names, block_size=512):
 
     large_blob = "x" * (block_size * 4)
     large_write = timeit(lambda: fs.make_file(["large.txt", large_blob]))
-    large_read  = timeit(lambda: fs.cat(["large.txt"]))
+    large_read  = timeit(lambda: fs._cat(["large.txt"]))
 
     return {
         "dir_create_time":   dir_create,
